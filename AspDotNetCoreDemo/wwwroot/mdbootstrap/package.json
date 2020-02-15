@@ -1,0 +1,46 @@
+{
+  "_args": [
+    [
+      "mdbootstrap@4.12.0",
+      "D:\\Repos\\github\\demo1\\AspDotNetCoreDemo"
+    ]
+  ],
+  "_from": "mdbootstrap@4.12.0",
+  "_id": "mdbootstrap@4.12.0",
+  "_inBundle": false,
+  "_integrity": "sha512-+X4x63tE96zpVOcRlVUGdcR65M9Ud+/l1TvdmcwUjEGo3ktn9TO3e6S3DBLTvchO9U5eKuJh/MIWIGac7+569g==",
+  "_location": "/mdbootstrap",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "mdbootstrap@4.12.0",
+    "name": "mdbootstrap",
+    "escapedName": "mdbootstrap",
+    "rawSpec": "4.12.0",
+    "saveSpec": null,
+    "fetchSpec": "4.12.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/mdbootstrap/-/mdbootstrap-4.12.0.tgz",
+  "_spec": "4.12.0",
+  "_where": "D:\\Repos\\github\\demo1\\AspDotNetCoreDemo",
+  "author": {
+    "name": "MDBootstrap"
+  },
+  "bugs": {
+    "url": "https://github.com/mdbootstrap/bootstrap-material-design/issues"
+  },
+  "description": "<p align=\"center\">\r   <a href=\"https://mdbootstrap.com/docs/jquery/getting-started/download/\">\r     <img src=\"https://mdbootstrap.com/img/Marketing/general/logo/medium/mdb-r.png\">\r   </a>\r </p>",
+  "homepage": "https://github.com/mdbootstrap/bootstrap-material-design#readme",
+  "license": "MIT",
+  "main": "js/mdb.min.js",
+  "name": "mdbootstrap",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mdbootstrap/bootstrap-material-design.git"
+  },
+  "version": "4.12.0"
+}
