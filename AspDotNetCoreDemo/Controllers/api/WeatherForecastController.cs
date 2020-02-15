@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace AspDotNetCoreDemo.Controllers
 {
+    [Route("api/v1/[controller]")]
     [ApiController]
-    [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
