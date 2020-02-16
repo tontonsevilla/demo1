@@ -1,4 +1,7 @@
-﻿
+﻿@using AspDotNetCoreDemo.Infrastrcuture.Data
+
+@model List<Blog>
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -11,3 +14,13 @@
         </p>
     </blockquote>
 </div>
+
+@foreach (var blog in Model)
+{
+    <div>
+        <p class="note note-primary">
+            <strong>@blog.Title</strong>
+            @blog.SubTitle
+        </p>
+    </div>
+}
