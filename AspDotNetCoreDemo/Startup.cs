@@ -1,5 +1,8 @@
 using AspDotNetCoreDemo.Infrastrcuture.Data;
 using AspDotNetCoreDemo.Infrastructure.Services;
+using AspDotNetCoreDemo.WebInfrastructure.Filters;
+using Hangfire;
+using Hangfire.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +20,7 @@ namespace AspDotNetCoreDemo
 {
     public class Startup
     {
-        private string databaseConnectionString = string.Empty;
+        private static string databaseConnectionString = string.Empty;
 
         public Startup(IConfiguration configuration)
         {
@@ -31,6 +35,8 @@ namespace AspDotNetCoreDemo
             databaseConnectionString = Configuration.GetConnectionString("AspDotNetCoreDemoSQLiteConnection");
 
             ConfigureIdentity(services);
+
+            services.AddHangfire(config => config.UseSQLiteStorage(databaseConnectionString));
 
             services.AddMvc(options =>
             {
@@ -87,7 +93,6 @@ namespace AspDotNetCoreDemo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-           
             if (env.IsDevelopment())
             {
                 if (File.Exists("AspDotNetCoreDemo.db"))
@@ -103,22 +108,45 @@ namespace AspDotNetCoreDemo
                 app.UseHsts();
             }
 
-            app.UsePathBase("/");
 
             ConfigureDatabase();
 
-            app.UseHttpsRedirection();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
+            //app.UsePathBase("/");
+
+            //app.UseHttpsRedirection();
+            //app.UseDefaultFiles();
+            //app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            ConfigureHangfire(app, env);
 
             app.UseMvc(routes =>
             {
                 routes
                     .MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private void ConfigureHangfire(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            var options = new SQLiteStorageOptions();
+            GlobalConfiguration.Configuration.UseSQLiteStorage(databaseConnectionString, options);
+
+            var backgroundJobServerOptions = new BackgroundJobServerOptions
+            {
+                WorkerCount = Environment.ProcessorCount * 4
+
+            };
+
+            app.UseHangfireServer(backgroundJobServerOptions);
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireDashboardAuthorizationFilter(env) }
+            });
+
+            // RecurringJob.AddOrUpdate(() => Debug.WriteLine($"Done ! {DateTime.Now}"), Cron.Minutely);
         }
 
         private void ConfigureDatabase()
@@ -129,6 +157,7 @@ namespace AspDotNetCoreDemo
             using (var dbContext = new AspDotNetCoreDemoDatabaseContext(optionsBuilder.Options))
             {
                 dbContext.Database.EnsureCreated();
+
                 if (!dbContext.Blogs.Any())
                 {
                     dbContext.Blogs.AddRange(new Blog[]
