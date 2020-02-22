@@ -113,9 +113,9 @@ namespace AspDotNetCoreDemo
 
             //app.UsePathBase("/");
 
-            //app.UseHttpsRedirection();
-            //app.UseDefaultFiles();
-            //app.UseStaticFiles();
+            app.UseHttpsRedirection();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseAuthorization();
