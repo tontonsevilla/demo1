@@ -1,4 +1,5 @@
 using AspDotNetCoreDemo.Infrastrcuture.Data;
+using AspDotNetCoreDemo.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace AspDotNetCoreDemo
@@ -21,6 +23,18 @@ namespace AspDotNetCoreDemo
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
+        {
+            ConfigureIdentity(services);
+
+            services.AddMvc(options =>
+            {
+                options.EnableEndpointRouting = false;
+            });
+
+            ConfigureCustomServices(services);
+        }
+
+        private void ConfigureIdentity(IServiceCollection services)
         {
             services.AddEntityFrameworkSqlite().AddDbContext<AspDotNetCoreDemoDatabaseContext>();
 
@@ -58,21 +72,19 @@ namespace AspDotNetCoreDemo
                 options.AccessDeniedPath = "/Account/AccessDenied";
                 options.SlidingExpiration = true;
             });
-
-            services.AddMvc(options => {
-                options.EnableEndpointRouting = false;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UsePathBase("/");
-
-            ConfigureDatabase();
-
+           
             if (env.IsDevelopment())
             {
+                if (File.Exists("AspDotNetCoreDemo.db"))
+                {
+                    File.Delete("AspDotNetCoreDemo.db");
+                }
+
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -80,6 +92,10 @@ namespace AspDotNetCoreDemo
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
+
+            app.UsePathBase("/");
+
+            ConfigureDatabase();
 
             app.UseHttpsRedirection();
             app.UseDefaultFiles();
@@ -111,6 +127,11 @@ namespace AspDotNetCoreDemo
                     dbContext.SaveChanges();
                 }
             }
+        }
+
+        private void ConfigureCustomServices(IServiceCollection services)
+        {
+            services.AddTransient<SiginManagerService>();
         }
     }
 }

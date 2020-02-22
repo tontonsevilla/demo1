@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace AspDotNetCoreDemo.Infrastrcuture.Data
 {
-    public class AspDotNetCoreDemoDatabaseContext : DbContext
+    public class AspDotNetCoreDemoDatabaseContext : IdentityDbContext
     {
         public DbSet<Blog> Blogs { get; set; }
 
@@ -20,6 +22,8 @@ namespace AspDotNetCoreDemo.Infrastrcuture.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<IdentityUser>().ToTable("AspNetUsers", "Identity");
+
             modelBuilder.Entity<Blog>().ToTable("Blogs", "Main");
             modelBuilder.Entity<Blog>(entity =>
             {
