@@ -63,5 +63,7 @@
     <script type="text/javascript" src="@Url.Content("~/mdbootstrap/js/popper.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/mdbootstrap/js/bootstrap.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/mdbootstrap/js/mdb.min.js")"></script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 </body>
 </html>

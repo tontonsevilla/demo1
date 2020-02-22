@@ -72,10 +72,13 @@ namespace AspDotNetCoreDemo.Controllers
                 if (signInResult.Succeeded)
                 {
                     return RedirectToAction("Index", "Home");
+                } else
+                {
+                    ModelState.AddModelError("signInResult", "Invalid account.");
                 }
             }
 
-            return View();
+            return View(model);
         }
 
         public IActionResult AccessDenied()

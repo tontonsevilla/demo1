@@ -14,35 +14,35 @@
                 <div class="card-body px-lg-5 pt-0">
 
                     <!-- Form -->
-                    <form asp-action="Register" class="text-center" style="color: #757575;">
+                    <form asp-action="Register" class="needs-validation" style="color: #757575;" novalidate>
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-row">
                             <div class="col">
                                 <!-- First name -->
                                 <div class="md-form">
-                                    <input type="text" asp-for="FirstName" class="form-control">
-                                    <label asp-for="FirstName">First name</label>
+                                    @Html.TextBoxWithRequiredAttributeFor(m => m.FirstName, new { @class = "form-control" })
+                                    @Html.LabelFor(m => m.FirstName)
                                 </div>
                             </div>
                             <div class="col">
                                 <!-- Last name -->
                                 <div class="md-form">
-                                    <input type="text" asp-for="LastName" class="form-control">
-                                    <label asp-for="LastName">Last name</label>
+                                    @Html.TextBoxWithRequiredAttributeFor(m => m.LastName, new { @class = "form-control" })
+                                    @Html.LabelFor(m => m.LastName)
                                 </div>
                             </div>
                         </div>
 
                         <!-- E-mail -->
                         <div class="md-form mt-0">
-                            <input type="email" asp-for="Email" class="form-control">
-                            <label asp-for="Email">E-mail</label>
+                            @Html.TextBoxWithRequiredAttributeFor(m => m.Email, new { @class = "form-control", @type="email" })
+                            @Html.LabelFor(m => m.Email)
                         </div>
 
                         <!-- Password -->
                         <div class="md-form">
-                            <input type="password" asp-for="Password" class="form-control" aria-describedby="PasswordHelpBlock">
-                            <label asp-for="Password">Password</label>
+                            @Html.PassWithRequiredAttributeFor(m => m.Password, new { @class = "form-control" })
+                            @Html.LabelFor(m => m.Password)
                             <small id="PasswordHelpBlock" class="form-text text-muted mb-4">
                                 At least 8 characters and 1 digit
                             </small>
