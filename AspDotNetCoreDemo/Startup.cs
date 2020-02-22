@@ -131,7 +131,8 @@ namespace AspDotNetCoreDemo
 
         private void ConfigureCustomServices(IServiceCollection services)
         {
-            services.AddTransient<SiginManagerService>();
+            services.AddTransient<SigninManagerService>()
+                    .AddTransient<UserManagerService>();
         }
     }
 }

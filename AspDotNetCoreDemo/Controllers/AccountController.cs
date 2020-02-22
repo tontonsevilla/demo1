@@ -1,7 +1,6 @@
 ﻿using AspDotNetCoreDemo.Infrastructure.Services;
 using AspDotNetCoreDemo.Models.Account;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -9,17 +8,14 @@ namespace AspDotNetCoreDemo.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly SignInManager<IdentityUser> signinManager;
-        private readonly SiginManagerService signinManagerService;
+        private readonly UserManagerService userManagerService;
+        private readonly SigninManagerService signinManagerService;
 
         public AccountController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signinManager,
-            SiginManagerService signinManagerService)
+            UserManagerService userManagerService,
+            SigninManagerService signinManagerService)
         {
-            this.userManager = userManager;
-            this.signinManager = signinManager;
+            this.userManagerService = userManagerService;
             this.signinManagerService = signinManagerService;
         }
              
@@ -43,35 +39,42 @@ namespace AspDotNetCoreDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser
+                var registerResult = await userManagerService.CreateUserAsync(model.Email, model.Password);
+
+                if (registerResult.RegisterResult.Succeeded &&
+                    registerResult.ConfirmEmailResult.Succeeded)
                 {
-                    Email = model.Email,
-                    UserName = model.Email
-                };
+                    var signinResult = await signinManagerService.SigninAsync(model.Email, model.Password);
 
-                var registerResult = await userManager.CreateAsync(user, model.Password);
-
-                var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
-                var confirmEmailResult = await userManager.ConfirmEmailAsync(user, token);
-
-                if (registerResult.Succeeded && confirmEmailResult.Succeeded)
-                {
-                    var signinResult = await signinManager.PasswordSignInAsync(user, model.Password, false, false);
-                    
                     if (signinResult.Succeeded)
                     {
-                        return Redirect(Url.Action("Index", "Home"));
+                        return RedirectToAction("Index", "Home");
                     }
                 }
-                
             }
 
             return View();
         }
 
+        [HttpGet]
         public IActionResult Login()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login([Bind("UserName, Password")] LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var signInResult = await signinManagerService.SigninAsync(model.UserName, model.Password, model.RememberMe);
+
+                if (signInResult.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
             return View();
         }
 
@@ -83,9 +86,9 @@ namespace AspDotNetCoreDemo.Controllers
         [Authorize]
         public async Task<IActionResult> Logout()
         {
-            await signinManagerService.Signout();
+            await signinManagerService.SignoutAsync();
 
-            return Redirect(Url.Action("Login", "Account"));
+            return RedirectToAction("Login", "Account");
         }
     }
 }
