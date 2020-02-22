@@ -9,14 +9,16 @@ namespace AspDotNetCoreDemo.Infrastrcuture.Data
 {
     public class AspDotNetCoreDemoDatabaseContext : IdentityDbContext
     {
+        public AspDotNetCoreDemoDatabaseContext(DbContextOptions<AspDotNetCoreDemoDatabaseContext> options)
+            : base(options)
+        {
+
+        }
+
         public DbSet<Blog> Blogs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlite("Filename=AspDotNetCoreDemo.db", options =>
-            {
-                options.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
-            });
             base.OnConfiguring(options);
         }
 

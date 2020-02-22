@@ -3,17 +3,21 @@ using AspDotNetCoreDemo.Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace AspDotNetCoreDemo
 {
     public class Startup
     {
+        private string databaseConnectionString = string.Empty;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -24,6 +28,8 @@ namespace AspDotNetCoreDemo
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            databaseConnectionString = Configuration.GetConnectionString("AspDotNetCoreDemoSQLiteConnection");
+
             ConfigureIdentity(services);
 
             services.AddMvc(options =>
@@ -36,7 +42,11 @@ namespace AspDotNetCoreDemo
 
         private void ConfigureIdentity(IServiceCollection services)
         {
-            services.AddEntityFrameworkSqlite().AddDbContext<AspDotNetCoreDemoDatabaseContext>();
+            services.AddEntityFrameworkSqlite().AddDbContext<AspDotNetCoreDemoDatabaseContext>(efOptions => {
+                efOptions.UseSqlite(databaseConnectionString, sqliteOptions => {
+                    sqliteOptions.MigrationsAssembly(Assembly.GetExecutingAssembly().FullName);
+                });
+            });
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<AspDotNetCoreDemoDatabaseContext>();
@@ -113,7 +123,10 @@ namespace AspDotNetCoreDemo
 
         private void ConfigureDatabase()
         {
-            using (var dbContext = new AspDotNetCoreDemoDatabaseContext())
+            var optionsBuilder = new DbContextOptionsBuilder<AspDotNetCoreDemoDatabaseContext>();
+            optionsBuilder.UseSqlite(databaseConnectionString);
+
+            using (var dbContext = new AspDotNetCoreDemoDatabaseContext(optionsBuilder.Options))
             {
                 dbContext.Database.EnsureCreated();
                 if (!dbContext.Blogs.Any())
