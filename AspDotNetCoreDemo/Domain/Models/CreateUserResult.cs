@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace AspDotNetCoreDemo.Domain
+namespace AspDotNetCoreDemo.Domain.Models
 {
     public class CreateUserResult
     {

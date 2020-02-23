@@ -1,20 +1,21 @@
-﻿using AspDotNetCoreDemo.Domain;
+﻿using AspDotNetCoreDemo.Domain.Interfaces;
+using AspDotNetCoreDemo.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 namespace AspDotNetCoreDemo.Infrastructure.Services
 {
-    public class UserManagerService
+    public class UserManagerService : IUserManagerService
     {
         private readonly UserManager<IdentityUser> userManager;
-        private readonly SigninManagerService siginManagerService;
+        private readonly ISigninManagerService signinManagerService;
 
         public UserManagerService(
             UserManager<IdentityUser> userManager,
-            SigninManagerService siginManagerService)
+            ISigninManagerService siginManagerService)
         {
             this.userManager = userManager;
-            this.siginManagerService = siginManagerService;
+            this.signinManagerService = siginManagerService;
         }
 
         public async Task<CreateUserResult> CreateUserAsync(string userName, string password)
@@ -37,6 +38,12 @@ namespace AspDotNetCoreDemo.Infrastructure.Services
             }
 
             return createUserResult;
+        }
+
+        public async Task<bool> IsValidUser(string userName, string password)
+        {
+            var user = await userManager.FindByEmailAsync(userName);
+            return await userManager.CheckPasswordAsync(user, password);
         }
     }
 }

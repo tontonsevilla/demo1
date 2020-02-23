@@ -1,4 +1,5 @@
-﻿using AspDotNetCoreDemo.Infrastructure.Services;
+﻿using AspDotNetCoreDemo.Domain.Interfaces;
+using AspDotNetCoreDemo.Infrastructure.Services;
 using AspDotNetCoreDemo.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,12 +9,12 @@ namespace AspDotNetCoreDemo.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManagerService userManagerService;
-        private readonly SigninManagerService signinManagerService;
+        private readonly IUserManagerService userManagerService;
+        private readonly ISigninManagerService signinManagerService;
 
         public AccountController(
-            UserManagerService userManagerService,
-            SigninManagerService signinManagerService)
+            IUserManagerService userManagerService,
+            ISigninManagerService signinManagerService)
         {
             this.userManagerService = userManagerService;
             this.signinManagerService = signinManagerService;

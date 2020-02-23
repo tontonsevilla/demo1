@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AspDotNetCoreDemo.Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
 namespace AspDotNetCoreDemo.Infrastructure.Services
 {
-    public class SigninManagerService
+    public class SigninManagerService : ISigninManagerService
     {
         private readonly SignInManager<IdentityUser> signInManager;
 
