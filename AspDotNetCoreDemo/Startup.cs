@@ -42,15 +42,6 @@ namespace AspDotNetCoreDemo
         {
             databaseConnectionString = Configuration.GetConnectionString("AspDotNetCoreDemoSQLiteConnection");
 
-            if (!env.IsDevelopment())
-            {
-                services.AddHttpsRedirection(options =>
-                {
-                    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
-                    options.HttpsPort = 443;
-                });
-            }
-
             ConfigureIdentityService(services);
 
             services.AddHangfire(config => config.UseSQLiteStorage(databaseConnectionString));
@@ -163,6 +154,19 @@ namespace AspDotNetCoreDemo
             {
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
+
+                app.Use(async (context, next) =>
+                {
+                    if (context.Request.IsHttps)
+                    {
+                        await next();
+                    }
+                    else
+                    {
+                        var withHttps = "https://" + context.Request.Host + context.Request.Path;
+                        context.Response.Redirect(withHttps);
+                    }
+                });
             }
 
 
