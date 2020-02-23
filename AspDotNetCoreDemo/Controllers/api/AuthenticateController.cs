@@ -31,7 +31,12 @@ namespace AspDotNetCoreDemo.Controllers.api
 
             if (authWithToken.IsAuthenticated)
             {
-                return Ok(authWithToken.Token);
+                var credential = new CredentialResponse
+                {
+                    Token = authWithToken.Token
+                };
+
+                return Ok(credential);
             }
 
             return BadRequest("Invalid Request");

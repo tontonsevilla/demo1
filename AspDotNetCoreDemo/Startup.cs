@@ -6,7 +6,6 @@ using AspDotNetCoreDemo.Infrastructure.Services;
 using AspDotNetCoreDemo.WebInfrastructure.Filters;
 using Hangfire;
 using Hangfire.SQLite;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
