@@ -168,9 +168,6 @@ namespace AspDotNetCoreDemo
 
             ConfigureDatabase();
 
-            //app.UsePathBase("/");
-
-            app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
