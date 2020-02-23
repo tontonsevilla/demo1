@@ -5,6 +5,7 @@ using Hangfire;
 using Hangfire.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,10 +22,12 @@ namespace AspDotNetCoreDemo
     public class Startup
     {
         private static string databaseConnectionString = string.Empty;
+        private readonly IWebHostEnvironment env;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            this.env = env;
         }
 
         public IConfiguration Configuration { get; }
@@ -33,6 +36,15 @@ namespace AspDotNetCoreDemo
         public void ConfigureServices(IServiceCollection services)
         {
             databaseConnectionString = Configuration.GetConnectionString("AspDotNetCoreDemoSQLiteConnection");
+
+            if (!env.IsDevelopment())
+            {
+                services.AddHttpsRedirection(options =>
+                {
+                    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect;
+                    options.HttpsPort = 443;
+                });
+            }
 
             ConfigureIdentity(services);
 
