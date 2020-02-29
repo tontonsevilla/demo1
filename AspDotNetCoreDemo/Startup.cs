@@ -6,6 +6,8 @@ using AspDotNetCoreDemo.Infrastructure.Services;
 using AspDotNetCoreDemo.WebInfrastructure.Filters;
 using Hangfire;
 using Hangfire.SQLite;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,8 +20,10 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AspDotNetCoreDemo
 {
@@ -54,13 +58,14 @@ namespace AspDotNetCoreDemo
 
             services.AddHangfire(config => config.UseSQLiteStorage(databaseConnectionString));
 
-            services.AddMvc(options =>
-            {
-                options.EnableEndpointRouting = false;
-            });
-
             ConfigureCustomServices(services);
             ConfigureJwtService(services);
+
+            services
+                .AddMvc(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                });
         }
 
         private void ConfigureIdentityService(IServiceCollection services)
@@ -123,16 +128,11 @@ namespace AspDotNetCoreDemo
 
             services
                 .AddAuthentication()
-                //.AddAuthentication(x =>
-                //{
-                //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                //})
-                .AddJwtBearer(x =>
-                {
-                    x.RequireHttpsMetadata = false;
-                    x.SaveToken = true;
-                    x.TokenValidationParameters = new TokenValidationParameters
+                .AddJwtBearer(options =>
+                {   
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(secret),
@@ -164,11 +164,10 @@ namespace AspDotNetCoreDemo
                 app.UseHsts();
             }
 
-
-            ConfigureDatabase();
-
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            ConfigureDatabase();
 
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
@@ -177,11 +176,7 @@ namespace AspDotNetCoreDemo
 
             ConfigureHangfire(app, env);
 
-            app.UseMvc(routes =>
-            {
-                routes
-                    .MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvcWithDefaultRoute();
         }
 
         private void ConfigureHangfire(IApplicationBuilder app, IWebHostEnvironment env)

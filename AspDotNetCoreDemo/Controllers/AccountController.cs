@@ -1,5 +1,4 @@
 ﻿using AspDotNetCoreDemo.Domain.Interfaces;
-using AspDotNetCoreDemo.Infrastructure.Services;
 using AspDotNetCoreDemo.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

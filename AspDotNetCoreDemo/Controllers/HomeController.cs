@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using AspDotNetCoreDemo.Infrastrcuture.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,9 +18,12 @@ namespace AspDotNetCoreDemo
             this.dbContext = dbContext;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View(this.dbContext.Blogs.ToList());
+            return await Task.Run(() => {
+                return View(this.dbContext.Blogs.ToList());
+            });
         }
     }
 }
