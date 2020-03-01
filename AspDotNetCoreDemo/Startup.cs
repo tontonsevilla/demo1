@@ -115,7 +115,8 @@ namespace AspDotNetCoreDemo
         private void ConfigureCustomServices(IServiceCollection services)
         {
             services.AddScoped<ISigninManagerService, SigninManagerService>()
-                    .AddScoped<IUserManagerService, UserManagerService>();
+                    .AddScoped<IUserManagerService, UserManagerService>()
+                    .AddScoped<IBlogService, BlogService>();
         }
 
         private void ConfigureJwtService(IServiceCollection services)

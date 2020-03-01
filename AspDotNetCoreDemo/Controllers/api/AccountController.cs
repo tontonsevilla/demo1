@@ -20,26 +20,26 @@ namespace AspDotNetCoreDemo.Controllers.api
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
-            var response = new ApiResponse<Empty>();
+            var result = new ApiResponse<Empty>();
 
             if (!ModelState.IsValid)
             {
-                response.AddError(ModelState);
-                return BadRequest(response);
+                result.AddError(ModelState);
+                return Ok(result);
             }
 
             var createResult = await userManagerService.CreateUserAsync(model.Email, model.Password);
 
             if (createResult.RegisterResult.Succeeded)
             {
-                return Ok(response);
+                return Ok(result);
             }
 
-            response.AddError(createResult.RegisterResult.Errors);
+            result.AddError(createResult.RegisterResult.Errors);
 
-            return BadRequest(response);
+            return Ok(result);
         }
 
     }

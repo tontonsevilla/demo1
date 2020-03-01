@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AspDotNetCoreDemo.Domain.Interfaces;
 using AspDotNetCoreDemo.Domain.Jwt.Models;
+using AspDotNetCoreDemo.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,50 +20,64 @@ namespace AspDotNetCoreDemo.Controllers.api
 
         [AllowAnonymous]
         [HttpPost("request")]
-        public async Task<ActionResult> RequestToken([FromBody] TokenRequest request)
+        public async Task<IActionResult> RequestToken([FromBody] TokenRequest request)
         {
+            var result = new ApiResponse<CredentialResponse>();
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                result.AddError(ModelState);
+                return Ok(result);
             }
 
             var authWithToken = await authneticateService.IsAuthenticatedAsync(request);
 
             if (authWithToken.IsAuthenticated)
             {
-                var credential = new CredentialResponse
+                var credentialReponse = new CredentialResponse
                 {
                     Token = authWithToken.Token
                 };
 
-                return Ok(credential);
+                result.AddData(credentialReponse);
+
+                return Ok(result);
             }
 
-            return BadRequest("Invalid Request");
+            result.AddError("Invalid Account");
+
+            return Ok(result);
         }
 
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<ActionResult> Signin([FromBody] TokenRequest request)
+        public async Task<IActionResult> Signin([FromBody] TokenRequest request)
         {
+            var result = new ApiResponse<CredentialResponse>();
+
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                result.AddError(ModelState);
+                return Ok(result);
             }
 
             var authWithToken = await authneticateService.IsAuthenticatedAsync(request);
 
             if (authWithToken.IsAuthenticated)
             {
-                var credential = new CredentialResponse
+                var credentialReponse = new CredentialResponse
                 {
                     Token = authWithToken.Token
                 };
 
-                return Ok(credential);
+                result.AddData(credentialReponse);
+
+                return Ok(result);
             }
 
-            return BadRequest("Invalid Request");
+            result.AddError("Invalid Account");
+
+            return Ok(result);
         }
     }
 }

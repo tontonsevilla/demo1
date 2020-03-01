@@ -20,8 +20,11 @@ namespace AspDotNetCoreDemo.Domain.Models
                 return ErrorMessages.Count > 0;
             }
         }
+
         public T Data { get; private set; }
+
         public List<string> ErrorMessages { get; private set; }
+
         public void AddError(string message)
         {
             ErrorMessages.Add(message);
@@ -51,6 +54,11 @@ namespace AspDotNetCoreDemo.Domain.Models
             {
                 ErrorMessages.Add(identityError.Description);
             }
+        }
+
+        public void AddData(T data)
+        {
+            Data = data;
         }
 
     }
